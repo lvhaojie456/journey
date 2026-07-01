@@ -471,85 +471,73 @@ body.view-single .bucket-list {
 
 .entry-birthday-burst.show {
     display: block;
-    animation: entryBurstFade 2.3s ease both;
+    animation: entryBurstFade 6.8s ease both;
+}
+
+.entry-birthday-burst::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(circle at 12% 52%, rgba(43, 31, 58, 0.22), transparent 34%),
+        radial-gradient(circle at 88% 52%, rgba(43, 31, 58, 0.22), transparent 34%),
+        linear-gradient(90deg, rgba(252, 250, 248, 0.36), rgba(255, 250, 241, 0.12) 50%, rgba(252, 250, 248, 0.36));
+}
+
+.entry-firework-canvas {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
 }
 
 .entry-birthday-message {
     position: absolute;
     left: 50%;
     top: 50%;
-    z-index: 2;
+    z-index: 3;
+    display: grid;
+    place-items: center;
     box-sizing: border-box;
-    width: max-content;
+    min-width: min(760px, calc(100vw - 40px));
     max-width: calc(100vw - 40px);
+    min-height: 118px;
     white-space: nowrap;
-    padding: 18px 28px 22px;
+    padding: 18px 34px 22px;
     border: 1px solid rgba(255, 246, 224, 0.72);
     border-radius: 999px;
     background: rgba(255, 250, 241, 0.92);
     box-shadow: 0 24px 70px rgba(82, 52, 62, 0.26), 0 0 55px rgba(248, 198, 107, 0.32);
     color: #7d4853;
     font-family: var(--font-serif);
-    font-size: clamp(34px, 7vw, 76px);
     font-weight: 700;
     letter-spacing: 0;
     line-height: 1.08;
     text-align: center;
     text-shadow: 0 2px 0 rgba(255, 255, 255, 0.7);
     transform: translate(-50%, -50%) scale(0.9);
-    animation: entryBirthdayMessage 2.3s ease both;
+    animation: entryBirthdayMessage 6.8s ease both;
 }
 
-.entry-fireworks {
-    position: absolute;
-    top: 50%;
-    z-index: 3;
-    width: 1px;
-    height: 1px;
+.entry-birthday-message span {
+    grid-area: 1 / 1;
+    display: block;
 }
 
-.entry-fireworks::before,
-.entry-fireworks::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 18px;
-    height: 18px;
-    border: 2px solid rgba(248, 198, 107, 0.9);
-    border-radius: 50%;
-    box-shadow: 0 0 34px rgba(248, 198, 107, 0.62);
+.entry-birthday-title {
+    font-size: clamp(34px, 7vw, 76px);
     opacity: 0;
-    transform: translate(-50%, -50%) scale(0.2);
-    animation: entryFireworkRing 1.9s ease-out 0.04s both;
+    animation: entryBirthdayTitle 6.8s ease both;
 }
 
-.entry-fireworks::after {
-    border-color: rgba(242, 143, 143, 0.82);
-    box-shadow: 0 0 40px rgba(242, 143, 143, 0.5);
-    animation-delay: 0.18s;
-}
-
-.entry-fireworks-left {
-    left: 11%;
-}
-
-.entry-fireworks-right {
-    right: 11%;
-}
-
-.entry-firework-spark {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 9px;
-    height: 9px;
-    border-radius: 50%;
-    background: radial-gradient(circle, #fff 0 22%, var(--spark-color) 28% 100%);
-    box-shadow: 0 0 24px var(--spark-color), 0 0 3px rgba(80, 42, 52, 0.5);
+.entry-birthday-subtitle {
+    color: #8c5a45;
+    font-family: var(--font-sans);
+    font-size: clamp(24px, 4.4vw, 44px);
+    font-weight: 800;
     opacity: 0;
-    transform: translate(-50%, -50%) scale(0.2);
-    animation: entryFireworkSpark 2.05s ease-out var(--spark-delay) both;
+    animation: entryBirthdaySubtitle 6.8s ease both;
 }
 
 #save-btn {
@@ -1547,7 +1535,7 @@ nav ul li a:active {
 }
 
 @keyframes entryBurstFade {
-    0%, 82% {
+    0%, 90% {
         opacity: 1;
     }
 
@@ -1562,7 +1550,7 @@ nav ul li a:active {
         transform: translate(-50%, -50%) scale(0.78);
     }
 
-    18%, 70% {
+    9%, 84% {
         opacity: 1;
         transform: translate(-50%, -50%) scale(1);
     }
@@ -1573,43 +1561,37 @@ nav ul li a:active {
     }
 }
 
-@keyframes entryFireworkRing {
-    0% {
+@keyframes entryBirthdayTitle {
+    0%, 7% {
         opacity: 0;
-        transform: translate(-50%, -50%) scale(0.2);
+        transform: translateY(18px) scale(0.92);
     }
 
-    12% {
+    14%, 34% {
         opacity: 1;
+        transform: translateY(0) scale(1);
     }
 
-    68% {
-        opacity: 0.64;
-    }
-
-    100% {
+    45%, 100% {
         opacity: 0;
-        transform: translate(-50%, -50%) scale(11);
+        transform: translateY(-18px) scale(0.96);
     }
 }
 
-@keyframes entryFireworkSpark {
-    0% {
+@keyframes entryBirthdaySubtitle {
+    0%, 42% {
         opacity: 0;
-        transform: translate(-50%, -50%) scale(0.2);
+        transform: translateY(18px) scale(0.96);
     }
 
-    12% {
+    51%, 86% {
         opacity: 1;
-    }
-
-    70% {
-        opacity: 0.88;
+        transform: translateY(0) scale(1);
     }
 
     100% {
         opacity: 0;
-        transform: translate(calc(var(--spark-x) - 50%), calc(var(--spark-y) - 50%)) scale(0.95);
+        transform: translateY(-12px) scale(0.98);
     }
 }
 
@@ -1627,18 +1609,19 @@ nav ul li a:active {
 
     .entry-birthday-message {
         width: min(340px, calc(100vw - 28px));
+        min-width: 0;
+        min-height: 92px;
         padding: 14px 18px 17px;
-        font-size: clamp(26px, 8.3vw, 38px);
         line-height: 1.12;
         white-space: nowrap;
     }
 
-    .entry-fireworks-left {
-        left: 12%;
+    .entry-birthday-title {
+        font-size: clamp(27px, 8.4vw, 38px);
     }
 
-    .entry-fireworks-right {
-        right: 12%;
+    .entry-birthday-subtitle {
+        font-size: clamp(22px, 6.8vw, 30px);
     }
     
     .section-title {

@@ -57,42 +57,259 @@ function showModal(title, message, isPrompt = false, defaultValue = '') {
 }
 
 let entryBirthdayTimer = null;
+let entryBirthdayFrame = null;
+let entryBirthdayResizeHandler = null;
+
+const entryFireworkPalettes = [
+    ['255, 191, 46', '255, 97, 120', '255, 242, 176'],
+    ['85, 214, 173', '122, 168, 255', '255, 236, 161'],
+    ['255, 148, 105', '223, 119, 170', '255, 250, 232']
+];
+
+function randomBetween(min, max) {
+    return Math.random() * (max - min) + min;
+}
+
+function chooseRandom(items) {
+    return items[Math.floor(Math.random() * items.length)];
+}
+
+function resizeEntryFireworkCanvas(canvas, context) {
+    const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+
+    canvas.width = Math.floor(width * pixelRatio);
+    canvas.height = Math.floor(height * pixelRatio);
+    context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+
+    return { width, height };
+}
+
+function stopEntryFireworks(canvas) {
+    if (entryBirthdayFrame) {
+        cancelAnimationFrame(entryBirthdayFrame);
+        entryBirthdayFrame = null;
+    }
+
+    if (entryBirthdayResizeHandler) {
+        window.removeEventListener('resize', entryBirthdayResizeHandler);
+        entryBirthdayResizeHandler = null;
+    }
+
+    const context = canvas?.getContext('2d');
+    if (context && canvas) {
+        context.clearRect(0, 0, canvas.width, canvas.height);
+    }
+}
+
+function startEntryFireworks(canvas, duration = 6400) {
+    const context = canvas.getContext('2d');
+    if (!context) return;
+
+    stopEntryFireworks(canvas);
+
+    let size = resizeEntryFireworkCanvas(canvas, context);
+    const rockets = [];
+    const particles = [];
+    const startedAt = performance.now();
+    let lastFrameAt = startedAt;
+    let nextLaunchAt = startedAt;
+
+    entryBirthdayResizeHandler = () => {
+        size = resizeEntryFireworkCanvas(canvas, context);
+    };
+    window.addEventListener('resize', entryBirthdayResizeHandler);
+
+    const createExplosion = (x, y, side = 'left', style = 'peony') => {
+        const palette = chooseRandom(entryFireworkPalettes);
+        const count = style === 'willow' ? 120 : 150;
+        const sideDrift = side === 'left' ? 0.2 : -0.2;
+
+        for (let index = 0; index < count; index++) {
+            const angle = (Math.PI * 2 * index) / count + randomBetween(-0.035, 0.035);
+            const ringBias = style === 'willow' ? Math.pow(Math.random(), 0.35) : Math.pow(Math.random(), 0.7);
+            const speed = randomBetween(1.4, style === 'willow' ? 5.4 : 7.4) * ringBias + 0.8;
+
+            particles.push({
+                x,
+                y,
+                vx: Math.cos(angle) * speed + sideDrift,
+                vy: Math.sin(angle) * speed - randomBetween(0.15, 0.75),
+                friction: randomBetween(0.968, 0.989),
+                gravity: style === 'willow' ? randomBetween(0.052, 0.075) : randomBetween(0.026, 0.048),
+                alpha: 1,
+                decay: randomBetween(0.008, style === 'willow' ? 0.014 : 0.019),
+                color: chooseRandom(palette),
+                size: randomBetween(1.1, 2.5),
+                trail: []
+            });
+        }
+
+        for (let index = 0; index < 32; index++) {
+            const angle = randomBetween(0, Math.PI * 2);
+            const speed = randomBetween(0.8, 3.6);
+
+            particles.push({
+                x,
+                y,
+                vx: Math.cos(angle) * speed,
+                vy: Math.sin(angle) * speed,
+                friction: 0.976,
+                gravity: 0.032,
+                alpha: 0.9,
+                decay: randomBetween(0.018, 0.028),
+                color: '255, 250, 232',
+                size: randomBetween(0.8, 1.7),
+                trail: []
+            });
+        }
+    };
+
+    const launchRocket = (side) => {
+        const fromLeft = side === 'left';
+        const startX = fromLeft ? randomBetween(-20, size.width * 0.1) : randomBetween(size.width * 0.9, size.width + 20);
+        const targetX = fromLeft ? randomBetween(size.width * 0.08, size.width * 0.31) : randomBetween(size.width * 0.69, size.width * 0.92);
+        const targetY = randomBetween(size.height * 0.16, size.height * 0.52);
+
+        rockets.push({
+            side,
+            startX,
+            startY: randomBetween(size.height * 0.82, size.height * 1.02),
+            targetX,
+            targetY,
+            startedAt: performance.now(),
+            duration: randomBetween(620, 980),
+            color: chooseRandom(chooseRandom(entryFireworkPalettes)),
+            trail: []
+        });
+    };
+
+    createExplosion(size.width * 0.12, size.height * 0.52, 'left');
+    createExplosion(size.width * 0.88, size.height * 0.52, 'right');
+
+    const drawRocket = (rocket, time) => {
+        const progress = Math.min(1, (time - rocket.startedAt) / rocket.duration);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        const arc = Math.sin(progress * Math.PI) * size.height * 0.08;
+
+        rocket.x = rocket.startX + (rocket.targetX - rocket.startX) * eased;
+        rocket.y = rocket.startY + (rocket.targetY - rocket.startY) * eased - arc;
+        rocket.trail.push({ x: rocket.x, y: rocket.y });
+        if (rocket.trail.length > 12) rocket.trail.shift();
+
+        context.beginPath();
+        rocket.trail.forEach((point, index) => {
+            if (index === 0) {
+                context.moveTo(point.x, point.y);
+            } else {
+                context.lineTo(point.x, point.y);
+            }
+        });
+        context.strokeStyle = `rgba(${rocket.color}, ${0.25 + progress * 0.55})`;
+        context.lineWidth = 2.4;
+        context.lineCap = 'round';
+        context.stroke();
+
+        context.beginPath();
+        context.arc(rocket.x, rocket.y, 2.4, 0, Math.PI * 2);
+        context.fillStyle = `rgba(255, 250, 232, ${0.72 + progress * 0.2})`;
+        context.fill();
+
+        if (progress >= 1) {
+            createExplosion(rocket.targetX, rocket.targetY, rocket.side, Math.random() > 0.48 ? 'willow' : 'peony');
+            return false;
+        }
+
+        return true;
+    };
+
+    const drawParticle = (particle, deltaScale) => {
+        particle.trail.push({ x: particle.x, y: particle.y, alpha: particle.alpha });
+        if (particle.trail.length > 8) particle.trail.shift();
+
+        particle.vx *= particle.friction;
+        particle.vy = particle.vy * particle.friction + particle.gravity * deltaScale;
+        particle.x += particle.vx * deltaScale;
+        particle.y += particle.vy * deltaScale;
+        particle.alpha -= particle.decay * deltaScale;
+
+        if (particle.alpha <= 0) return false;
+
+        context.beginPath();
+        particle.trail.forEach((point, index) => {
+            if (index === 0) {
+                context.moveTo(point.x, point.y);
+            } else {
+                context.lineTo(point.x, point.y);
+            }
+        });
+        context.strokeStyle = `rgba(${particle.color}, ${Math.max(0, particle.alpha * 0.78)})`;
+        context.lineWidth = particle.size;
+        context.lineCap = 'round';
+        context.stroke();
+
+        context.beginPath();
+        context.arc(particle.x, particle.y, particle.size * 0.68, 0, Math.PI * 2);
+        context.fillStyle = `rgba(255, 252, 235, ${Math.max(0, particle.alpha * 0.86)})`;
+        context.fill();
+
+        return true;
+    };
+
+    const render = (time) => {
+        const elapsed = time - startedAt;
+        const deltaScale = Math.min(2.2, (time - lastFrameAt) / 16.67 || 1);
+        lastFrameAt = time;
+
+        context.clearRect(0, 0, size.width, size.height);
+        context.globalCompositeOperation = 'lighter';
+
+        if (elapsed < duration - 1200 && time >= nextLaunchAt) {
+            launchRocket('left');
+            launchRocket('right');
+            nextLaunchAt = time + randomBetween(420, 680);
+        }
+
+        for (let index = rockets.length - 1; index >= 0; index--) {
+            if (!drawRocket(rockets[index], time)) rockets.splice(index, 1);
+        }
+
+        for (let index = particles.length - 1; index >= 0; index--) {
+            if (!drawParticle(particles[index], deltaScale)) particles.splice(index, 1);
+        }
+
+        context.globalCompositeOperation = 'source-over';
+
+        if (elapsed < duration || rockets.length || particles.length) {
+            entryBirthdayFrame = requestAnimationFrame(render);
+        }
+    };
+
+    entryBirthdayFrame = requestAnimationFrame(render);
+}
 
 function launchEntryBirthdayBurst() {
     const burst = document.getElementById('entry-birthday-burst');
+    const canvas = document.getElementById('entry-firework-canvas');
     if (!burst) return;
 
     clearTimeout(entryBirthdayTimer);
-    burst.querySelectorAll('.entry-firework-spark').forEach(spark => spark.remove());
     burst.classList.remove('show');
     void burst.offsetWidth;
     burst.classList.add('show');
     burst.setAttribute('aria-hidden', 'false');
 
-    const colors = ['#ffbf2e', '#ff6178', '#fff2b0', '#55d6ad', '#7aa8ff'];
-    const fireworks = burst.querySelectorAll('.entry-fireworks');
-
-    fireworks.forEach(firework => {
-        for (let index = 0; index < 36; index++) {
-            const spark = document.createElement('span');
-            const angle = (Math.PI * 2 * index) / 36 + Math.random() * 0.26;
-            const distance = 80 + Math.random() * 128;
-
-            spark.className = 'entry-firework-spark';
-            spark.style.setProperty('--spark-x', `${Math.cos(angle) * distance}px`);
-            spark.style.setProperty('--spark-y', `${Math.sin(angle) * distance}px`);
-            spark.style.setProperty('--spark-delay', `${Math.random() * 0.28}s`);
-            spark.style.setProperty('--spark-color', colors[Math.floor(Math.random() * colors.length)]);
-
-            firework.appendChild(spark);
-        }
-    });
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (canvas && !reduceMotion) {
+        startEntryFireworks(canvas);
+    }
 
     entryBirthdayTimer = setTimeout(() => {
         burst.classList.remove('show');
         burst.setAttribute('aria-hidden', 'true');
-        burst.querySelectorAll('.entry-firework-spark').forEach(spark => spark.remove());
-    }, 2300);
+        stopEntryFireworks(canvas);
+    }, 6800);
 }
 
 // ==========================================
