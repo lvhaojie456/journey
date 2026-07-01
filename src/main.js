@@ -293,6 +293,7 @@ function typeBirthdayParagraph() {
     let charIndex = 0;
     birthdayTypingTimer = setInterval(() => {
         paragraph.textContent = paragraphText.slice(0, charIndex + 1);
+        letterBody.scrollTop = letterBody.scrollHeight;
         charIndex++;
 
         if (charIndex >= paragraphText.length) {

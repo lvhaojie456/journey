@@ -1321,13 +1321,19 @@ nav ul li a:active {
 
 .birthday-letter-panel {
     justify-content: flex-start;
-    overflow-y: auto;
+    gap: 14px;
+    overflow: hidden;
+    padding-top: 76px;
+    padding-bottom: 36px;
 }
 
 .birthday-letter-body {
     width: min(700px, 100%);
-    min-height: 320px;
+    height: clamp(280px, 44vh, 360px);
     padding: 34px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
     border-radius: 18px;
     background:
         linear-gradient(rgba(255, 250, 243, 0.94), rgba(255, 250, 243, 0.94)),
@@ -1335,6 +1341,18 @@ nav ul li a:active {
     color: #47323b;
     text-align: left;
     box-shadow: 0 18px 44px rgba(0, 0, 0, 0.18);
+    scrollbar-color: rgba(127, 75, 83, 0.36) transparent;
+    scrollbar-width: thin;
+    -webkit-overflow-scrolling: touch;
+}
+
+.birthday-letter-body::-webkit-scrollbar {
+    width: 8px;
+}
+
+.birthday-letter-body::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background: rgba(127, 75, 83, 0.32);
 }
 
 .birthday-letter-body p {
@@ -1514,6 +1532,7 @@ nav ul li a:active {
     }
 
     .birthday-letter-body {
+        height: clamp(260px, 48vh, 380px);
         padding: 24px 20px;
     }
 
