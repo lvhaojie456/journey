@@ -94,6 +94,237 @@ function startPetals() {
 }
 
 // ==========================================
+// Hidden Birthday Surprise
+// ==========================================
+const birthdayLetterParagraphs = [
+    '亲爱的朱梓萌，生日快乐。',
+    '我把这封信藏在我们的网站里，是因为我想让今天先像一个小秘密一样，轻轻落到你手心里。',
+    '认识你之后，很多普通的日子都变得有了具体的光。可能是一句话，一个表情，一次并肩走过的路，也可能只是想到你时，心里忽然安静下来。',
+    '我希望新的一岁里，你能一直被认真听见，被坚定选择，被温柔对待。遇到开心的事，我们一起笑很久；遇到累的时刻，也有人稳稳站在你这边。',
+    '你不需要永远勇敢，也不需要永远完美。你只要做朱梓萌，就已经足够珍贵。',
+    '今天所有的蜡烛、星星和这封慢慢出现的信，都只想说同一句话：生日快乐，我很喜欢你，也很珍惜你。',
+    '愿你新的一岁，平安、明亮、自由，愿我能陪你把很多未来慢慢走成回忆。'
+];
+
+let birthdaySecretClicks = 0;
+let birthdayTypingTimer = null;
+let birthdayParagraphIndex = 0;
+
+function setBirthdayStep(stepIndex) {
+    const panels = document.querySelectorAll('[data-birthday-panel]');
+    const dots = document.querySelectorAll('.birthday-progress span');
+
+    panels.forEach(panel => {
+        panel.classList.toggle('active', Number(panel.dataset.birthdayPanel) === stepIndex);
+    });
+
+    dots.forEach((dot, index) => {
+        dot.classList.toggle('active', index === stepIndex);
+    });
+
+    if (stepIndex === 4) {
+        beginBirthdayLetter();
+    }
+}
+
+function resetBirthdayFlow() {
+    clearInterval(birthdayTypingTimer);
+    birthdayTypingTimer = null;
+    birthdayParagraphIndex = 0;
+
+    const wish = document.getElementById('birthday-wish');
+    const tokenNext = document.getElementById('birthday-token-next');
+    const candleNext = document.getElementById('birthday-candle-next');
+    const envelope = document.getElementById('birthday-envelope');
+    const letterBody = document.getElementById('birthday-letter-body');
+    const letterNext = document.getElementById('birthday-letter-next');
+
+    if (wish) wish.value = '';
+    document.querySelectorAll('.wish-token').forEach(token => token.classList.remove('selected'));
+    document.querySelectorAll('.birthday-candle').forEach(candle => candle.classList.remove('blown'));
+    if (tokenNext) tokenNext.disabled = true;
+    if (candleNext) candleNext.disabled = true;
+    if (envelope) envelope.classList.remove('open');
+    if (letterBody) letterBody.innerHTML = '';
+    if (letterNext) {
+        letterNext.disabled = false;
+        letterNext.innerText = '下一句';
+    }
+
+    setBirthdayStep(0);
+}
+
+function openBirthdaySurprise() {
+    const surprise = document.getElementById('birthday-surprise');
+    if (!surprise) return;
+
+    resetBirthdayFlow();
+    surprise.classList.add('active');
+    surprise.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeBirthdaySurprise() {
+    const surprise = document.getElementById('birthday-surprise');
+    if (!surprise) return;
+
+    clearInterval(birthdayTypingTimer);
+    birthdayTypingTimer = null;
+    surprise.classList.remove('active');
+    surprise.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+}
+
+function startBirthdayConfetti(amount = 24) {
+    const colors = ['#f4c76d', '#e99a90', '#96c2b2', '#fff5e0', '#d9a4b1'];
+
+    for (let i = 0; i < amount; i++) {
+        const confetti = document.createElement('span');
+        confetti.className = 'birthday-confetti';
+        confetti.style.left = `${Math.random() * 100}vw`;
+        confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.animationDuration = `${Math.random() * 1.8 + 2.8}s`;
+        confetti.style.animationDelay = `${Math.random() * 0.35}s`;
+        confetti.style.setProperty('--confetti-drift', `${Math.random() * 220 - 110}px`);
+        document.body.appendChild(confetti);
+
+        setTimeout(() => {
+            confetti.remove();
+        }, 5200);
+    }
+}
+
+function beginBirthdayLetter() {
+    const letterBody = document.getElementById('birthday-letter-body');
+    const nextButton = document.getElementById('birthday-letter-next');
+    if (!letterBody || !nextButton) return;
+
+    clearInterval(birthdayTypingTimer);
+    birthdayParagraphIndex = 0;
+    letterBody.innerHTML = '';
+    nextButton.innerText = '下一句';
+    typeBirthdayParagraph();
+}
+
+function typeBirthdayParagraph() {
+    const letterBody = document.getElementById('birthday-letter-body');
+    const nextButton = document.getElementById('birthday-letter-next');
+    if (!letterBody || !nextButton) return;
+
+    clearInterval(birthdayTypingTimer);
+    nextButton.disabled = true;
+
+    const paragraphText = birthdayLetterParagraphs[birthdayParagraphIndex];
+    const paragraph = document.createElement('p');
+    letterBody.appendChild(paragraph);
+
+    let charIndex = 0;
+    birthdayTypingTimer = setInterval(() => {
+        paragraph.textContent = paragraphText.slice(0, charIndex + 1);
+        charIndex++;
+
+        if (charIndex >= paragraphText.length) {
+            clearInterval(birthdayTypingTimer);
+            birthdayTypingTimer = null;
+            nextButton.disabled = false;
+            nextButton.innerText = birthdayParagraphIndex === birthdayLetterParagraphs.length - 1 ? '收好这封信' : '下一句';
+        }
+    }, 42);
+}
+
+function initBirthdaySurprise() {
+    const surprise = document.getElementById('birthday-surprise');
+    const trigger = document.getElementById('secret-birthday-trigger');
+    if (!surprise || surprise.dataset.ready === 'true') return;
+    surprise.dataset.ready = 'true';
+
+    trigger?.addEventListener('click', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        birthdaySecretClicks++;
+
+        if (birthdaySecretClicks < 3) {
+            showToast(`第 ${birthdaySecretClicks} 颗星星被点亮`);
+            return;
+        }
+
+        birthdaySecretClicks = 0;
+        openBirthdaySurprise();
+    });
+
+    document.getElementById('birthday-start-btn')?.addEventListener('click', () => {
+        const wish = document.getElementById('birthday-wish')?.value.trim();
+        if (wish) {
+            sessionStorage.setItem('zhuzimengBirthdayWish', wish);
+        }
+        startBirthdayConfetti(12);
+        setBirthdayStep(1);
+    });
+
+    const tokenNext = document.getElementById('birthday-token-next');
+    const tokens = Array.from(document.querySelectorAll('.wish-token'));
+    tokens.forEach(token => {
+        token.addEventListener('click', () => {
+            token.classList.toggle('selected');
+            const allSelected = tokens.every(item => item.classList.contains('selected'));
+            if (tokenNext) tokenNext.disabled = !allSelected;
+        });
+    });
+
+    tokenNext?.addEventListener('click', () => {
+        startBirthdayConfetti(10);
+        setBirthdayStep(2);
+    });
+
+    const candleNext = document.getElementById('birthday-candle-next');
+    const candles = Array.from(document.querySelectorAll('.birthday-candle'));
+    candles.forEach(candle => {
+        candle.addEventListener('click', () => {
+            candle.classList.add('blown');
+            const allBlown = candles.every(item => item.classList.contains('blown'));
+            if (allBlown) {
+                startBirthdayConfetti(18);
+                if (candleNext) candleNext.disabled = false;
+            }
+        });
+    });
+
+    candleNext?.addEventListener('click', () => {
+        setBirthdayStep(3);
+    });
+
+    document.getElementById('birthday-envelope')?.addEventListener('click', (event) => {
+        const envelope = event.currentTarget;
+        envelope.classList.add('open');
+        startBirthdayConfetti(26);
+        setTimeout(() => {
+            setBirthdayStep(4);
+        }, 650);
+    });
+
+    document.getElementById('birthday-letter-next')?.addEventListener('click', () => {
+        if (birthdayTypingTimer) return;
+
+        if (birthdayParagraphIndex < birthdayLetterParagraphs.length - 1) {
+            birthdayParagraphIndex++;
+            typeBirthdayParagraph();
+            return;
+        }
+
+        startBirthdayConfetti(40);
+        const nextButton = document.getElementById('birthday-letter-next');
+        if (nextButton) {
+            nextButton.innerText = '生日快乐';
+            nextButton.disabled = true;
+        }
+    });
+
+    if (new URLSearchParams(window.location.search).get('birthday') === '1' || window.location.hash === '#birthday') {
+        setTimeout(openBirthdaySurprise, 450);
+    }
+}
+
+// ==========================================
 // 在这里修改你们的恋爱起始日期 (格式: YYYY-MM-DDTHH:mm:ss)
 // ==========================================
 const startDate = new Date('2025-05-02T19:06:00');
@@ -314,9 +545,15 @@ async function loadDataFromCOS() {
         }
         
         const text = await response.text();
+        const trimmedText = text.trim();
+        if (!trimmedText || trimmedText.startsWith('<')) {
+            console.log("尚无云端数据文件，或本地开发环境未启用 Functions");
+            return;
+        }
+
         let parsed;
         try {
-            parsed = JSON.parse(text);
+            parsed = JSON.parse(trimmedText);
         } catch (e) {
             console.error("无法解析云端数据", e);
             return;
@@ -335,6 +572,7 @@ async function loadDataFromCOS() {
 window.addEventListener('DOMContentLoaded', () => {
     checkAnniversary();
     loadDataFromCOS();
+    initBirthdaySurprise();
 
     // 默认移除所有可编辑属性，确保仅浏览模式安全
     document.querySelectorAll('[contenteditable]').forEach(el => el.removeAttribute('contenteditable'));
@@ -638,6 +876,8 @@ window.addTimelineItem = addTimelineItem;
 window.addGalleryItem = addGalleryItem;
 window.addBucketItem = addBucketItem;
 window.closeLightbox = closeLightbox;
+window.openBirthdaySurprise = openBirthdaySurprise;
+window.closeBirthdaySurprise = closeBirthdaySurprise;
 
 // ==========================================
 // Virtual Pet (Bongo Cat) Logic via PixiJS
@@ -669,6 +909,9 @@ window.addEventListener('DOMContentLoaded', async () => {
         const model = await Live2DModel.from('/models/bongo-cat/cat.model3.json');
 
         app.stage.addChild(model);
+        app.stage.interactiveChildren = false;
+        model.interactive = false;
+        model.interactiveChildren = false;
 
         // 调整 Bongo Cat 的大小和位置
         model.scale.set(0.12); // Bongo Cat 模型通常比较大，缩小以适应画布
