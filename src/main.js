@@ -113,22 +113,22 @@ const birthdayLetterParagraphs = [
 const birthdayPhotos = [
     {
         src: '/birthday/photo-1.jpg',
-        caption: '戴着生日帽的你，认真又可爱。',
+        caption: '抓到可爱宝宝一只',
         layout: 'portrait'
     },
     {
         src: '/birthday/photo-2.jpg',
-        caption: '小小的火光，照着我们一起为你庆祝的那一刻。',
+        caption: '所有人心跳停止，聆听宝宝的心愿！',
         layout: 'landscape'
     },
     {
         src: '/birthday/photo-3.jpg',
-        caption: '靠在一起的时候，世界会变得很近。',
+        caption: '我的全世界竟然就在我身边😱',
         layout: 'portrait'
     },
     {
         src: '/birthday/photo-4.jpg',
-        caption: '蛋糕要慢慢吃，快乐也要慢慢留住。',
+        caption: '迪士尼在逃公主在我面前吃小蛋糕，不管了，先拍一张📷',
         layout: 'tall'
     }
 ];
@@ -137,6 +137,9 @@ let birthdaySecretClicks = 0;
 let birthdayTypingTimer = null;
 let birthdayParagraphIndex = 0;
 let birthdayPhotoIndex = 0;
+let birthdayMicStream = null;
+let birthdayAudioContext = null;
+let birthdayMicFrame = null;
 
 function setBirthdayStep(stepIndex) {
     const panels = document.querySelectorAll('[data-birthday-panel]');
@@ -150,6 +153,10 @@ function setBirthdayStep(stepIndex) {
         dot.classList.toggle('active', index === stepIndex);
     });
 
+    if (stepIndex !== 3) {
+        stopBirthdayMic();
+    }
+
     if (stepIndex === 5) {
         beginBirthdayLetter();
     }
@@ -160,6 +167,7 @@ function resetBirthdayFlow() {
     birthdayTypingTimer = null;
     birthdayParagraphIndex = 0;
     birthdayPhotoIndex = 0;
+    stopBirthdayMic();
 
     const wish = document.getElementById('birthday-wish');
     const tokenNext = document.getElementById('birthday-token-next');
@@ -167,20 +175,17 @@ function resetBirthdayFlow() {
     const envelope = document.getElementById('birthday-envelope');
     const letterBody = document.getElementById('birthday-letter-body');
     const letterNext = document.getElementById('birthday-letter-next');
-    const giftCard = document.getElementById('birthday-gift-card');
+    const blowStatus = document.getElementById('birthday-blow-status');
 
     if (wish) wish.value = '';
     document.querySelectorAll('.wish-token').forEach(token => token.classList.remove('selected'));
     document.querySelectorAll('.birthday-candle').forEach(candle => candle.classList.remove('blown'));
     if (tokenNext) tokenNext.disabled = true;
     if (candleNext) candleNext.disabled = true;
+    if (blowStatus) blowStatus.innerText = '麦克风没开也没关系，点烛火也可以吹灭。';
     updateBirthdayPhoto();
     if (envelope) envelope.classList.remove('open');
     if (letterBody) letterBody.innerHTML = '';
-    if (giftCard) {
-        giftCard.hidden = true;
-        giftCard.classList.remove('show');
-    }
     if (letterNext) {
         letterNext.disabled = false;
         letterNext.innerText = '下一句';
@@ -226,6 +231,7 @@ function closeBirthdaySurprise() {
 
     clearInterval(birthdayTypingTimer);
     birthdayTypingTimer = null;
+    stopBirthdayMic();
     surprise.classList.remove('active');
     surprise.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = '';
@@ -253,29 +259,13 @@ function startBirthdayConfetti(amount = 24) {
 function beginBirthdayLetter() {
     const letterBody = document.getElementById('birthday-letter-body');
     const nextButton = document.getElementById('birthday-letter-next');
-    const giftCard = document.getElementById('birthday-gift-card');
     if (!letterBody || !nextButton) return;
 
     clearInterval(birthdayTypingTimer);
     birthdayParagraphIndex = 0;
     letterBody.innerHTML = '';
-    if (giftCard) {
-        giftCard.hidden = true;
-        giftCard.classList.remove('show');
-    }
     nextButton.innerText = '下一句';
     typeBirthdayParagraph();
-}
-
-function revealBirthdayGift() {
-    const giftCard = document.getElementById('birthday-gift-card');
-    if (!giftCard) return;
-
-    giftCard.hidden = false;
-    requestAnimationFrame(() => {
-        giftCard.classList.add('show');
-        giftCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    });
 }
 
 function typeBirthdayParagraph() {
@@ -303,6 +293,129 @@ function typeBirthdayParagraph() {
             nextButton.innerText = birthdayParagraphIndex === birthdayLetterParagraphs.length - 1 ? '收好这封信' : '下一句';
         }
     }, 42);
+}
+
+function updateBirthdayBlowStatus(message) {
+    const status = document.getElementById('birthday-blow-status');
+    if (status) status.innerText = message;
+}
+
+function stopBirthdayMic() {
+    if (birthdayMicFrame) {
+        cancelAnimationFrame(birthdayMicFrame);
+        birthdayMicFrame = null;
+    }
+
+    if (birthdayMicStream) {
+        birthdayMicStream.getTracks().forEach(track => track.stop());
+        birthdayMicStream = null;
+    }
+
+    if (birthdayAudioContext && birthdayAudioContext.state !== 'closed') {
+        birthdayAudioContext.close();
+    }
+    birthdayAudioContext = null;
+
+    const meter = document.getElementById('birthday-blow-meter');
+    const micButton = document.getElementById('birthday-mic-btn');
+    if (meter) meter.style.width = '0%';
+    if (micButton) {
+        micButton.disabled = false;
+        micButton.innerText = '打开麦克风吹蜡烛';
+    }
+}
+
+function finishBirthdayCandles(message = '蜡烛吹灭啦，许愿完成。') {
+    const candleNext = document.getElementById('birthday-candle-next');
+    const candles = Array.from(document.querySelectorAll('.birthday-candle'));
+    const shouldCelebrate = candleNext?.disabled ?? true;
+
+    candles.forEach(candle => candle.classList.add('blown'));
+    stopBirthdayMic();
+    updateBirthdayBlowStatus(message);
+    if (candleNext) candleNext.disabled = false;
+    if (shouldCelebrate) startBirthdayConfetti(22);
+}
+
+function checkBirthdayCandles() {
+    const candleNext = document.getElementById('birthday-candle-next');
+    const candles = Array.from(document.querySelectorAll('.birthday-candle'));
+    const remaining = candles.filter(candle => !candle.classList.contains('blown')).length;
+
+    if (remaining === 0) {
+        finishBirthdayCandles('烛火都灭啦，宝宝的心愿正在生效。');
+        return;
+    }
+
+    updateBirthdayBlowStatus(`还剩 ${remaining} 簇烛火，可以继续点，也可以打开麦克风吹一下。`);
+}
+
+async function startBirthdayMic() {
+    const micButton = document.getElementById('birthday-mic-btn');
+    const meter = document.getElementById('birthday-blow-meter');
+    if (birthdayMicStream) return;
+
+    if (!navigator.mediaDevices?.getUserMedia) {
+        updateBirthdayBlowStatus('这个浏览器暂时不能用麦克风，直接点烛火也可以。');
+        return;
+    }
+
+    try {
+        if (micButton) {
+            micButton.disabled = true;
+            micButton.innerText = '正在打开麦克风...';
+        }
+        updateBirthdayBlowStatus('麦克风打开后，对着它轻轻吹一下。');
+
+        birthdayMicStream = await navigator.mediaDevices.getUserMedia({
+            audio: {
+                echoCancellation: false,
+                noiseSuppression: false,
+                autoGainControl: false
+            }
+        });
+        birthdayAudioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const source = birthdayAudioContext.createMediaStreamSource(birthdayMicStream);
+        const analyser = birthdayAudioContext.createAnalyser();
+        analyser.fftSize = 1024;
+        source.connect(analyser);
+
+        const samples = new Uint8Array(analyser.fftSize);
+        let loudFrames = 0;
+        if (micButton) {
+            micButton.disabled = false;
+            micButton.innerText = '正在听宝宝吹气';
+        }
+
+        const listen = () => {
+            analyser.getByteTimeDomainData(samples);
+            let sum = 0;
+            samples.forEach(sample => {
+                const centered = (sample - 128) / 128;
+                sum += centered * centered;
+            });
+            const volume = Math.sqrt(sum / samples.length);
+            if (meter) meter.style.width = `${Math.min(100, Math.round(volume * 380))}%`;
+
+            if (volume > 0.16) {
+                loudFrames++;
+            } else {
+                loudFrames = Math.max(0, loudFrames - 1);
+            }
+
+            if (loudFrames >= 3) {
+                finishBirthdayCandles('收到宝宝的风啦，蜡烛一下子全灭了。');
+                return;
+            }
+
+            birthdayMicFrame = requestAnimationFrame(listen);
+        };
+
+        birthdayMicFrame = requestAnimationFrame(listen);
+    } catch (error) {
+        stopBirthdayMic();
+        updateBirthdayBlowStatus('麦克风没有打开，直接点烛火也可以吹灭。');
+    }
 }
 
 function initBirthdaySurprise() {
@@ -370,13 +483,11 @@ function initBirthdaySurprise() {
     candles.forEach(candle => {
         candle.addEventListener('click', () => {
             candle.classList.add('blown');
-            const allBlown = candles.every(item => item.classList.contains('blown'));
-            if (allBlown) {
-                startBirthdayConfetti(18);
-                if (candleNext) candleNext.disabled = false;
-            }
+            checkBirthdayCandles();
         });
     });
+
+    document.getElementById('birthday-mic-btn')?.addEventListener('click', startBirthdayMic);
 
     candleNext?.addEventListener('click', () => {
         setBirthdayStep(4);
@@ -401,10 +512,9 @@ function initBirthdaySurprise() {
         }
 
         startBirthdayConfetti(40);
-        revealBirthdayGift();
         const nextButton = document.getElementById('birthday-letter-next');
         if (nextButton) {
-            nextButton.innerText = '礼物在这里';
+            nextButton.innerText = '生日快乐';
             nextButton.disabled = true;
         }
     });

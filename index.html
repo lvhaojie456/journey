@@ -151,11 +151,11 @@
             <section class="birthday-panel" data-birthday-panel="1">
                 <p class="birthday-kicker">第一步</p>
                 <h2>点亮三件小事</h2>
-                <p>每点亮一件，就把今天多给她一点温柔。</p>
+                <p>朱梓萌今天有没有开开心心的呀</p>
                 <div class="birthday-tokens">
-                    <button class="wish-token" type="button">今天要被好好爱着</button>
-                    <button class="wish-token" type="button">今天要有很多快乐</button>
-                    <button class="wish-token" type="button">今天要离梦想更近一点</button>
+                    <button class="wish-token" type="button">今天有没有好好吃饭呀</button>
+                    <button class="wish-token" type="button">今天有没有被吕豪杰抱抱呀</button>
+                    <button class="wish-token" type="button">今天有没有想吕豪杰呀</button>
                 </div>
                 <button id="birthday-token-next" class="birthday-action" type="button" disabled>继续</button>
             </section>
@@ -168,22 +168,26 @@
                     <img id="birthday-photo" src="/birthday/photo-1.jpg" alt="生日照片">
                     <div class="birthday-photo-shine"></div>
                 </div>
-                <p id="birthday-photo-caption" class="birthday-photo-caption">戴着生日帽的你，认真又可爱。</p>
+                <p id="birthday-photo-caption" class="birthday-photo-caption">抓到可爱宝宝一只</p>
                 <div id="birthday-photo-count" class="birthday-photo-count">1 / 4</div>
                 <button id="birthday-photo-next" class="birthday-action" type="button">下一张</button>
             </section>
 
-            <section class="birthday-panel" data-birthday-panel="3">
+            <section class="birthday-panel birthday-candle-panel" data-birthday-panel="3">
                 <p class="birthday-kicker">第三步</p>
                 <h2>许愿，然后轻轻吹灭蜡烛</h2>
-                <p>每一簇小火光，都替你说一句生日快乐。</p>
+                <p>可以打开麦克风轻轻吹一下，也可以直接点烛火。</p>
                 <div class="birthday-cake" aria-label="生日蛋糕">
-                    <button class="birthday-candle" type="button" aria-label="蜡烛一"><span></span></button>
-                    <button class="birthday-candle" type="button" aria-label="蜡烛二"><span></span></button>
-                    <button class="birthday-candle" type="button" aria-label="蜡烛三"><span></span></button>
-                    <div class="cake-top"></div>
-                    <div class="cake-base"></div>
-                    <div class="cake-plate"></div>
+                    <img class="birthday-cake-image" src="/birthday/cake.jpg" alt="生日蛋糕">
+                    <button class="birthday-candle" type="button" aria-label="烛火一"><span></span></button>
+                    <button class="birthday-candle" type="button" aria-label="烛火二"><span></span></button>
+                    <button class="birthday-candle" type="button" aria-label="烛火三"><span></span></button>
+                    <button class="birthday-candle" type="button" aria-label="烛火四"><span></span></button>
+                </div>
+                <div class="birthday-blow-controls">
+                    <button id="birthday-mic-btn" class="birthday-action birthday-mic-btn" type="button">打开麦克风吹蜡烛</button>
+                    <div class="birthday-blow-meter" aria-hidden="true"><span id="birthday-blow-meter"></span></div>
+                    <p id="birthday-blow-status">麦克风没开也没关系，点烛火也可以吹灭。</p>
                 </div>
                 <button id="birthday-candle-next" class="birthday-action" type="button" disabled>蜡烛吹好了</button>
             </section>
@@ -202,10 +206,6 @@
                 <p class="birthday-kicker">生日快乐</p>
                 <h2>写给朱梓萌的一封信</h2>
                 <div id="birthday-letter-body" class="birthday-letter-body"></div>
-                <div id="birthday-gift-card" class="birthday-gift-card" hidden>
-                    <p>还有一份小礼物，Apple Pencil 的收货地址想交给你自己写。</p>
-                    <a class="birthday-action birthday-gift-link" href="https://secure.store.apple.com/shop/order/list" target="_blank" rel="noopener noreferrer">去填写收货地址</a>
-                </div>
                 <button id="birthday-letter-next" class="birthday-action" type="button">下一句</button>
             </section>
         </div>

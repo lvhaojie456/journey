@@ -1177,89 +1177,132 @@ nav ul li a:active {
     letter-spacing: 2px;
 }
 
+.birthday-candle-panel {
+    gap: 10px;
+    padding-top: 70px;
+    padding-bottom: 30px;
+}
+
+.birthday-candle-panel h2 {
+    max-width: 760px;
+    font-size: clamp(30px, 5vw, 52px);
+}
+
+.birthday-candle-panel > p {
+    line-height: 1.45;
+}
+
 .birthday-cake {
     position: relative;
-    width: min(360px, 82vw);
-    height: 260px;
-    margin: 8px auto 0;
+    width: min(430px, 86vw);
+    height: min(38vh, 300px);
+    min-height: 250px;
+    margin: 4px auto 0;
+    overflow: hidden;
+    border: 8px solid rgba(255, 250, 243, 0.9);
+    border-radius: 22px;
+    background: #fffaf3;
+    box-shadow: 0 24px 58px rgba(0, 0, 0, 0.28);
+}
+
+.birthday-cake-image {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    object-position: center 42%;
 }
 
 .birthday-candle {
     position: absolute;
-    bottom: 142px;
     z-index: 2;
-    width: 24px;
-    height: 84px;
+    width: 44px;
+    height: 62px;
     border: none;
-    border-radius: 9px 9px 4px 4px;
-    background: repeating-linear-gradient(135deg, #fff5e0 0 10px, #e99a90 10px 18px);
-    box-shadow: inset 0 -8px 0 rgba(0, 0, 0, 0.08);
+    border-radius: 999px;
+    background: transparent;
+    box-shadow: none;
+    transform: translate(-50%, -50%);
 }
 
-.birthday-candle:nth-child(1) {
-    left: 31%;
+.birthday-candle:nth-of-type(1) {
+    left: 22%;
+    top: 20%;
 }
 
-.birthday-candle:nth-child(2) {
-    left: calc(50% - 12px);
+.birthday-candle:nth-of-type(2) {
+    left: 36%;
+    top: 16%;
 }
 
-.birthday-candle:nth-child(3) {
-    right: 31%;
+.birthday-candle:nth-of-type(3) {
+    left: 63%;
+    top: 16%;
+}
+
+.birthday-candle:nth-of-type(4) {
+    left: 77%;
+    top: 20%;
 }
 
 .birthday-candle span {
     position: absolute;
     left: 50%;
-    top: -30px;
-    width: 18px;
-    height: 28px;
+    top: 50%;
+    width: 20px;
+    height: 32px;
     border-radius: 60% 40% 55% 45%;
     background: linear-gradient(180deg, #fff9b7, #f4a043 70%, #d95d5d);
-    box-shadow: 0 0 18px rgba(244, 199, 109, 0.9);
-    transform: translateX(-50%) rotate(8deg);
+    box-shadow: 0 0 18px rgba(244, 199, 109, 0.9), 0 0 34px rgba(244, 199, 109, 0.4);
+    transform: translate(-50%, -50%) rotate(8deg);
     transform-origin: bottom center;
     animation: candleFlicker 0.8s ease-in-out infinite alternate;
 }
 
 .birthday-candle.blown span {
     opacity: 0;
-    transform: translateX(-50%) translateY(8px) scale(0.2);
+    transform: translate(-50%, -50%) translateY(10px) scale(0.2);
     animation: none;
     transition: opacity 0.22s ease, transform 0.22s ease;
 }
 
-.cake-top,
-.cake-base,
-.cake-plate {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
+.birthday-blow-controls {
+    display: flex;
+    width: min(430px, 86vw);
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
 }
 
-.cake-top {
-    bottom: 82px;
-    width: 78%;
-    height: 64px;
-    border-radius: 24px 24px 14px 14px;
-    background: linear-gradient(180deg, #f9d6c5, #df907f);
+.birthday-mic-btn {
+    min-height: 42px;
+    padding: 10px 18px;
+    font-size: 14px;
 }
 
-.cake-base {
-    bottom: 32px;
-    width: 88%;
-    height: 82px;
-    border-radius: 18px 18px 26px 26px;
-    background: linear-gradient(180deg, #fff0d7, #e5a78a);
-    box-shadow: inset 0 -14px 0 rgba(143, 78, 86, 0.12);
-}
-
-.cake-plate {
-    bottom: 18px;
-    width: 96%;
-    height: 22px;
+.birthday-blow-meter {
+    width: min(260px, 100%);
+    height: 8px;
+    overflow: hidden;
     border-radius: 999px;
-    background: rgba(255, 255, 255, 0.34);
+    background: rgba(255, 255, 255, 0.18);
+}
+
+.birthday-blow-meter span {
+    display: block;
+    width: 0%;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, #96c2b2, #f4c76d, #e99a90);
+    transition: width 0.08s linear;
+}
+
+.birthday-blow-controls p {
+    max-width: 380px;
+    min-height: 24px;
+    color: rgba(255, 250, 243, 0.72);
+    font-size: 13px;
+    line-height: 1.55;
 }
 
 .birthday-envelope {
@@ -1369,44 +1412,6 @@ nav ul li a:active {
     margin-bottom: 0;
 }
 
-.birthday-gift-card {
-    display: flex;
-    width: min(700px, 100%);
-    padding: 22px;
-    border: 1px solid rgba(255, 250, 243, 0.3);
-    border-radius: 18px;
-    background: rgba(255, 255, 255, 0.11);
-    box-shadow: 0 18px 42px rgba(0, 0, 0, 0.18);
-    flex-direction: column;
-    align-items: center;
-    gap: 14px;
-    opacity: 0;
-    transform: translateY(12px);
-    transition: opacity 0.28s ease, transform 0.28s ease;
-}
-
-.birthday-gift-card[hidden] {
-    display: none;
-}
-
-.birthday-gift-card.show {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.birthday-gift-card p {
-    margin: 0;
-    color: rgba(255, 250, 243, 0.88);
-    font-weight: 700;
-}
-
-.birthday-gift-link {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    text-decoration: none;
-}
-
 .birthday-confetti {
     position: fixed;
     top: -12px;
@@ -1429,8 +1434,8 @@ nav ul li a:active {
 }
 
 @keyframes candleFlicker {
-    from { transform: translateX(-50%) rotate(-7deg) scale(0.94); }
-    to { transform: translateX(-50%) rotate(8deg) scale(1.06); }
+    from { transform: translate(-50%, -50%) rotate(-7deg) scale(0.94); }
+    to { transform: translate(-50%, -50%) rotate(8deg) scale(1.06); }
 }
 
 @keyframes birthdayPhotoFlip {
@@ -1531,6 +1536,33 @@ nav ul li a:active {
         min-height: 46px;
     }
 
+    .birthday-candle-panel {
+        gap: 8px;
+        padding-top: 70px;
+        padding-bottom: 24px;
+    }
+
+    .birthday-candle-panel h2 {
+        font-size: 34px;
+    }
+
+    .birthday-cake {
+        width: min(310px, 100%);
+        height: min(30vh, 240px);
+        min-height: 210px;
+        border-width: 6px;
+    }
+
+    .birthday-blow-controls {
+        width: min(310px, 100%);
+        gap: 6px;
+    }
+
+    .birthday-blow-controls p {
+        min-height: 36px;
+        font-size: 12px;
+    }
+
     .birthday-letter-body {
         height: clamp(260px, 48vh, 380px);
         padding: 24px 20px;
@@ -1540,7 +1572,4 @@ nav ul li a:active {
         font-size: 15px;
     }
 
-    .birthday-gift-card {
-        padding: 18px;
-    }
 }
