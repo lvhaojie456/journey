@@ -1351,6 +1351,44 @@ nav ul li a:active {
     margin-bottom: 0;
 }
 
+.birthday-gift-card {
+    display: flex;
+    width: min(700px, 100%);
+    padding: 22px;
+    border: 1px solid rgba(255, 250, 243, 0.3);
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.11);
+    box-shadow: 0 18px 42px rgba(0, 0, 0, 0.18);
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.28s ease, transform 0.28s ease;
+}
+
+.birthday-gift-card[hidden] {
+    display: none;
+}
+
+.birthday-gift-card.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.birthday-gift-card p {
+    margin: 0;
+    color: rgba(255, 250, 243, 0.88);
+    font-weight: 700;
+}
+
+.birthday-gift-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+}
+
 .birthday-confetti {
     position: fixed;
     top: -12px;
@@ -1481,5 +1519,9 @@ nav ul li a:active {
 
     .birthday-letter-body p {
         font-size: 15px;
+    }
+
+    .birthday-gift-card {
+        padding: 18px;
     }
 }

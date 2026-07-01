@@ -167,6 +167,7 @@ function resetBirthdayFlow() {
     const envelope = document.getElementById('birthday-envelope');
     const letterBody = document.getElementById('birthday-letter-body');
     const letterNext = document.getElementById('birthday-letter-next');
+    const giftCard = document.getElementById('birthday-gift-card');
 
     if (wish) wish.value = '';
     document.querySelectorAll('.wish-token').forEach(token => token.classList.remove('selected'));
@@ -176,6 +177,10 @@ function resetBirthdayFlow() {
     updateBirthdayPhoto();
     if (envelope) envelope.classList.remove('open');
     if (letterBody) letterBody.innerHTML = '';
+    if (giftCard) {
+        giftCard.hidden = true;
+        giftCard.classList.remove('show');
+    }
     if (letterNext) {
         letterNext.disabled = false;
         letterNext.innerText = '下一句';
@@ -248,13 +253,29 @@ function startBirthdayConfetti(amount = 24) {
 function beginBirthdayLetter() {
     const letterBody = document.getElementById('birthday-letter-body');
     const nextButton = document.getElementById('birthday-letter-next');
+    const giftCard = document.getElementById('birthday-gift-card');
     if (!letterBody || !nextButton) return;
 
     clearInterval(birthdayTypingTimer);
     birthdayParagraphIndex = 0;
     letterBody.innerHTML = '';
+    if (giftCard) {
+        giftCard.hidden = true;
+        giftCard.classList.remove('show');
+    }
     nextButton.innerText = '下一句';
     typeBirthdayParagraph();
+}
+
+function revealBirthdayGift() {
+    const giftCard = document.getElementById('birthday-gift-card');
+    if (!giftCard) return;
+
+    giftCard.hidden = false;
+    requestAnimationFrame(() => {
+        giftCard.classList.add('show');
+        giftCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    });
 }
 
 function typeBirthdayParagraph() {
@@ -379,9 +400,10 @@ function initBirthdaySurprise() {
         }
 
         startBirthdayConfetti(40);
+        revealBirthdayGift();
         const nextButton = document.getElementById('birthday-letter-next');
         if (nextButton) {
-            nextButton.innerText = '生日快乐';
+            nextButton.innerText = '礼物在这里';
             nextButton.disabled = true;
         }
     });
