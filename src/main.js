@@ -56,6 +56,45 @@ function showModal(title, message, isPrompt = false, defaultValue = '') {
     });
 }
 
+let entryBirthdayTimer = null;
+
+function launchEntryBirthdayBurst() {
+    const burst = document.getElementById('entry-birthday-burst');
+    if (!burst) return;
+
+    clearTimeout(entryBirthdayTimer);
+    burst.querySelectorAll('.entry-firework-spark').forEach(spark => spark.remove());
+    burst.classList.remove('show');
+    void burst.offsetWidth;
+    burst.classList.add('show');
+    burst.setAttribute('aria-hidden', 'false');
+
+    const colors = ['#ffbf2e', '#ff6178', '#fff2b0', '#55d6ad', '#7aa8ff'];
+    const fireworks = burst.querySelectorAll('.entry-fireworks');
+
+    fireworks.forEach(firework => {
+        for (let index = 0; index < 36; index++) {
+            const spark = document.createElement('span');
+            const angle = (Math.PI * 2 * index) / 36 + Math.random() * 0.26;
+            const distance = 80 + Math.random() * 128;
+
+            spark.className = 'entry-firework-spark';
+            spark.style.setProperty('--spark-x', `${Math.cos(angle) * distance}px`);
+            spark.style.setProperty('--spark-y', `${Math.sin(angle) * distance}px`);
+            spark.style.setProperty('--spark-delay', `${Math.random() * 0.28}s`);
+            spark.style.setProperty('--spark-color', colors[Math.floor(Math.random() * colors.length)]);
+
+            firework.appendChild(spark);
+        }
+    });
+
+    entryBirthdayTimer = setTimeout(() => {
+        burst.classList.remove('show');
+        burst.setAttribute('aria-hidden', 'true');
+        burst.querySelectorAll('.entry-firework-spark').forEach(spark => spark.remove());
+    }, 2300);
+}
+
 // ==========================================
 // Anniversary Petals Logic
 // ==========================================
@@ -849,6 +888,7 @@ async function verifyAuth() {
         if (isSuccess) {
             document.getElementById('auth-overlay').style.display = 'none';
             enableEditMode();
+            launchEntryBirthdayBurst();
         } else {
             document.getElementById('auth-error').style.display = 'block';
             document.getElementById('auth-error').innerText = '密码错误或后端环境未就绪';
@@ -865,6 +905,7 @@ async function verifyAuth() {
 
 function skipAuth() {
     document.getElementById('auth-overlay').style.display = 'none';
+    launchEntryBirthdayBurst();
 }
 
 function enableEditMode() {

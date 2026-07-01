@@ -460,6 +460,98 @@ body.view-single .bucket-list {
     background: #e8e8e8;
 }
 
+.entry-birthday-burst {
+    position: fixed;
+    inset: 0;
+    z-index: 13000;
+    display: none;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.entry-birthday-burst.show {
+    display: block;
+    animation: entryBurstFade 2.3s ease both;
+}
+
+.entry-birthday-message {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    z-index: 2;
+    box-sizing: border-box;
+    width: max-content;
+    max-width: calc(100vw - 40px);
+    white-space: nowrap;
+    padding: 18px 28px 22px;
+    border: 1px solid rgba(255, 246, 224, 0.72);
+    border-radius: 999px;
+    background: rgba(255, 250, 241, 0.92);
+    box-shadow: 0 24px 70px rgba(82, 52, 62, 0.26), 0 0 55px rgba(248, 198, 107, 0.32);
+    color: #7d4853;
+    font-family: var(--font-serif);
+    font-size: clamp(34px, 7vw, 76px);
+    font-weight: 700;
+    letter-spacing: 0;
+    line-height: 1.08;
+    text-align: center;
+    text-shadow: 0 2px 0 rgba(255, 255, 255, 0.7);
+    transform: translate(-50%, -50%) scale(0.9);
+    animation: entryBirthdayMessage 2.3s ease both;
+}
+
+.entry-fireworks {
+    position: absolute;
+    top: 50%;
+    z-index: 3;
+    width: 1px;
+    height: 1px;
+}
+
+.entry-fireworks::before,
+.entry-fireworks::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba(248, 198, 107, 0.9);
+    border-radius: 50%;
+    box-shadow: 0 0 34px rgba(248, 198, 107, 0.62);
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.2);
+    animation: entryFireworkRing 1.9s ease-out 0.04s both;
+}
+
+.entry-fireworks::after {
+    border-color: rgba(242, 143, 143, 0.82);
+    box-shadow: 0 0 40px rgba(242, 143, 143, 0.5);
+    animation-delay: 0.18s;
+}
+
+.entry-fireworks-left {
+    left: 11%;
+}
+
+.entry-fireworks-right {
+    right: 11%;
+}
+
+.entry-firework-spark {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #fff 0 22%, var(--spark-color) 28% 100%);
+    box-shadow: 0 0 24px var(--spark-color), 0 0 3px rgba(80, 42, 52, 0.5);
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.2);
+    animation: entryFireworkSpark 2.05s ease-out var(--spark-delay) both;
+}
+
 #save-btn {
     position: fixed;
     bottom: 30px;
@@ -1454,6 +1546,73 @@ nav ul li a:active {
     }
 }
 
+@keyframes entryBurstFade {
+    0%, 82% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+@keyframes entryBirthdayMessage {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.78);
+    }
+
+    18%, 70% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -56%) scale(0.96);
+    }
+}
+
+@keyframes entryFireworkRing {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.2);
+    }
+
+    12% {
+        opacity: 1;
+    }
+
+    68% {
+        opacity: 0.64;
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(11);
+    }
+}
+
+@keyframes entryFireworkSpark {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.2);
+    }
+
+    12% {
+        opacity: 1;
+    }
+
+    70% {
+        opacity: 0.88;
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(calc(var(--spark-x) - 50%), calc(var(--spark-y) - 50%)) scale(0.95);
+    }
+}
+
 /* ==========================================
    Mobile Tweaks
    ========================================== */
@@ -1464,6 +1623,22 @@ nav ul li a:active {
     
     .gallery-grid {
         gap: 8px;
+    }
+
+    .entry-birthday-message {
+        width: min(340px, calc(100vw - 28px));
+        padding: 14px 18px 17px;
+        font-size: clamp(26px, 8.3vw, 38px);
+        line-height: 1.12;
+        white-space: nowrap;
+    }
+
+    .entry-fireworks-left {
+        left: 12%;
+    }
+
+    .entry-fireworks-right {
+        right: 12%;
     }
     
     .section-title {
