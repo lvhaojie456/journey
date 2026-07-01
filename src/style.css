@@ -1095,6 +1095,88 @@ nav ul li a:active {
     font-weight: 800;
 }
 
+.birthday-photo-card {
+    position: relative;
+    width: min(420px, 100%);
+    height: min(44vh, 340px);
+    min-height: 300px;
+    overflow: hidden;
+    border: 10px solid rgba(255, 250, 243, 0.9);
+    border-bottom-width: 42px;
+    border-radius: 18px;
+    background: rgba(255, 250, 243, 0.9);
+    box-shadow: 0 24px 58px rgba(0, 0, 0, 0.28);
+    transform: rotate(-1.5deg);
+    transition: transform 0.24s ease, box-shadow 0.24s ease;
+}
+
+.birthday-photo-panel {
+    gap: 10px;
+    padding-top: 72px;
+    padding-bottom: 36px;
+}
+
+.birthday-photo-panel h2 {
+    font-size: clamp(30px, 4.2vw, 46px);
+}
+
+.birthday-photo-panel > p {
+    line-height: 1.55;
+}
+
+.birthday-photo-card.portrait {
+    width: min(255px, 90%);
+}
+
+.birthday-photo-card.tall {
+    width: min(200px, 86%);
+}
+
+.birthday-photo-card.landscape {
+    width: min(420px, 100%);
+}
+
+.birthday-photo-card:hover {
+    transform: rotate(0deg) translateY(-3px);
+    box-shadow: 0 30px 64px rgba(0, 0, 0, 0.34);
+}
+
+.birthday-photo-card.flipped {
+    animation: birthdayPhotoFlip 0.45s ease both;
+}
+
+.birthday-photo-card img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: contain;
+    object-position: center;
+    border-radius: 8px;
+    background: #262531;
+}
+
+.birthday-photo-shine {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(110deg, transparent 0 42%, rgba(255, 255, 255, 0.26) 50%, transparent 58% 100%);
+    transform: translateX(-120%);
+    animation: birthdayPhotoShine 1.2s ease 0.1s both;
+}
+
+.birthday-photo-caption {
+    min-height: 30px;
+    color: rgba(255, 250, 243, 0.88) !important;
+    font-weight: 700;
+}
+
+.birthday-photo-count {
+    color: rgba(255, 250, 243, 0.58);
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 2px;
+}
+
 .birthday-cake {
     position: relative;
     width: min(360px, 82vw);
@@ -1295,6 +1377,15 @@ nav ul li a:active {
     to { transform: translateX(-50%) rotate(8deg) scale(1.06); }
 }
 
+@keyframes birthdayPhotoFlip {
+    from { opacity: 0; transform: rotate(2deg) translateY(12px) scale(0.96); }
+    to { opacity: 1; transform: rotate(-1.5deg) translateY(0) scale(1); }
+}
+
+@keyframes birthdayPhotoShine {
+    to { transform: translateX(120%); }
+}
+
 @keyframes birthdayConfettiFall {
     to {
         transform: translate3d(var(--confetti-drift), 108vh, 0) rotate(620deg);
@@ -1343,6 +1434,10 @@ nav ul li a:active {
         font-size: 38px;
     }
 
+    .birthday-photo-panel h2 {
+        font-size: 34px;
+    }
+
     .birthday-panel p {
         font-size: 14px;
     }
@@ -1354,6 +1449,30 @@ nav ul li a:active {
 
     .wish-token {
         min-height: 76px;
+    }
+
+    .birthday-photo-card {
+        width: min(300px, 100%);
+        height: min(34vh, 280px);
+        min-height: 0;
+        border-width: 8px;
+        border-bottom-width: 34px;
+    }
+
+    .birthday-photo-card.portrait {
+        width: min(220px, 92%);
+    }
+
+    .birthday-photo-card.tall {
+        width: min(170px, 86%);
+    }
+
+    .birthday-photo-card.landscape {
+        width: min(300px, 100%);
+    }
+
+    .birthday-photo-caption {
+        min-height: 46px;
     }
 
     .birthday-letter-body {

@@ -137,6 +137,7 @@
                 <span></span>
                 <span></span>
                 <span></span>
+                <span></span>
             </div>
 
             <section class="birthday-panel active" data-birthday-panel="0">
@@ -159,8 +160,21 @@
                 <button id="birthday-token-next" class="birthday-action" type="button" disabled>继续</button>
             </section>
 
-            <section class="birthday-panel" data-birthday-panel="2">
+            <section class="birthday-panel birthday-photo-panel" data-birthday-panel="2">
                 <p class="birthday-kicker">第二步</p>
+                <h2>把今天的照片慢慢翻完</h2>
+                <p>这些瞬间都被我收好了。每翻一张，就把那一刻再轻轻过一遍。</p>
+                <div class="birthday-photo-card" id="birthday-photo-card">
+                    <img id="birthday-photo" src="/birthday/photo-1.jpg" alt="生日照片">
+                    <div class="birthday-photo-shine"></div>
+                </div>
+                <p id="birthday-photo-caption" class="birthday-photo-caption">戴着生日帽的你，认真又可爱。</p>
+                <div id="birthday-photo-count" class="birthday-photo-count">1 / 4</div>
+                <button id="birthday-photo-next" class="birthday-action" type="button">下一张</button>
+            </section>
+
+            <section class="birthday-panel" data-birthday-panel="3">
+                <p class="birthday-kicker">第三步</p>
                 <h2>许愿，然后轻轻吹灭蜡烛</h2>
                 <p>每一簇小火光，都替你说一句生日快乐。</p>
                 <div class="birthday-cake" aria-label="生日蛋糕">
@@ -174,8 +188,8 @@
                 <button id="birthday-candle-next" class="birthday-action" type="button" disabled>蜡烛吹好了</button>
             </section>
 
-            <section class="birthday-panel" data-birthday-panel="3">
-                <p class="birthday-kicker">第三步</p>
+            <section class="birthday-panel" data-birthday-panel="4">
+                <p class="birthday-kicker">第四步</p>
                 <h2>这里有一封只给你的信</h2>
                 <p>慢慢打开，慢慢看。今天的时间可以走得轻一点。</p>
                 <button id="birthday-envelope" class="birthday-envelope" type="button" aria-label="打开生日信">
@@ -184,7 +198,7 @@
                 </button>
             </section>
 
-            <section class="birthday-panel birthday-letter-panel" data-birthday-panel="4">
+            <section class="birthday-panel birthday-letter-panel" data-birthday-panel="5">
                 <p class="birthday-kicker">生日快乐</p>
                 <h2>写给朱梓萌的一封信</h2>
                 <div id="birthday-letter-body" class="birthday-letter-body"></div>

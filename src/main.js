@@ -106,9 +106,33 @@ const birthdayLetterParagraphs = [
     '愿你新的一岁，平安、明亮、自由，愿我能陪你把很多未来慢慢走成回忆。'
 ];
 
+const birthdayPhotos = [
+    {
+        src: '/birthday/photo-1.jpg',
+        caption: '戴着生日帽的你，认真又可爱。',
+        layout: 'portrait'
+    },
+    {
+        src: '/birthday/photo-2.jpg',
+        caption: '小小的火光，照着我们一起为你庆祝的那一刻。',
+        layout: 'landscape'
+    },
+    {
+        src: '/birthday/photo-3.jpg',
+        caption: '靠在一起的时候，世界会变得很近。',
+        layout: 'portrait'
+    },
+    {
+        src: '/birthday/photo-4.jpg',
+        caption: '蛋糕要慢慢吃，快乐也要慢慢留住。',
+        layout: 'tall'
+    }
+];
+
 let birthdaySecretClicks = 0;
 let birthdayTypingTimer = null;
 let birthdayParagraphIndex = 0;
+let birthdayPhotoIndex = 0;
 
 function setBirthdayStep(stepIndex) {
     const panels = document.querySelectorAll('[data-birthday-panel]');
@@ -122,7 +146,7 @@ function setBirthdayStep(stepIndex) {
         dot.classList.toggle('active', index === stepIndex);
     });
 
-    if (stepIndex === 4) {
+    if (stepIndex === 5) {
         beginBirthdayLetter();
     }
 }
@@ -131,6 +155,7 @@ function resetBirthdayFlow() {
     clearInterval(birthdayTypingTimer);
     birthdayTypingTimer = null;
     birthdayParagraphIndex = 0;
+    birthdayPhotoIndex = 0;
 
     const wish = document.getElementById('birthday-wish');
     const tokenNext = document.getElementById('birthday-token-next');
@@ -144,6 +169,7 @@ function resetBirthdayFlow() {
     document.querySelectorAll('.birthday-candle').forEach(candle => candle.classList.remove('blown'));
     if (tokenNext) tokenNext.disabled = true;
     if (candleNext) candleNext.disabled = true;
+    updateBirthdayPhoto();
     if (envelope) envelope.classList.remove('open');
     if (letterBody) letterBody.innerHTML = '';
     if (letterNext) {
@@ -152,6 +178,27 @@ function resetBirthdayFlow() {
     }
 
     setBirthdayStep(0);
+}
+
+function updateBirthdayPhoto() {
+    const photo = document.getElementById('birthday-photo');
+    const caption = document.getElementById('birthday-photo-caption');
+    const count = document.getElementById('birthday-photo-count');
+    const nextButton = document.getElementById('birthday-photo-next');
+    const card = document.getElementById('birthday-photo-card');
+    const current = birthdayPhotos[birthdayPhotoIndex];
+
+    if (!photo || !caption || !count || !nextButton || !current) return;
+
+    card?.classList.remove('flipped', 'portrait', 'landscape', 'tall');
+    void card?.offsetWidth;
+    card?.classList.add('flipped', current.layout);
+
+    photo.src = current.src;
+    photo.alt = `生日照片 ${birthdayPhotoIndex + 1}`;
+    caption.innerText = current.caption;
+    count.innerText = `${birthdayPhotoIndex + 1} / ${birthdayPhotos.length}`;
+    nextButton.innerText = birthdayPhotoIndex === birthdayPhotos.length - 1 ? '继续许愿' : '下一张';
 }
 
 function openBirthdaySurprise() {
@@ -276,6 +323,22 @@ function initBirthdaySurprise() {
         setBirthdayStep(2);
     });
 
+    document.getElementById('birthday-photo-next')?.addEventListener('click', () => {
+        if (birthdayPhotoIndex < birthdayPhotos.length - 1) {
+            birthdayPhotoIndex++;
+            updateBirthdayPhoto();
+            startBirthdayConfetti(8);
+            return;
+        }
+
+        startBirthdayConfetti(14);
+        setBirthdayStep(3);
+    });
+
+    document.getElementById('birthday-photo-card')?.addEventListener('click', () => {
+        document.getElementById('birthday-photo-next')?.click();
+    });
+
     const candleNext = document.getElementById('birthday-candle-next');
     const candles = Array.from(document.querySelectorAll('.birthday-candle'));
     candles.forEach(candle => {
@@ -290,7 +353,7 @@ function initBirthdaySurprise() {
     });
 
     candleNext?.addEventListener('click', () => {
-        setBirthdayStep(3);
+        setBirthdayStep(4);
     });
 
     document.getElementById('birthday-envelope')?.addEventListener('click', (event) => {
@@ -298,7 +361,7 @@ function initBirthdaySurprise() {
         envelope.classList.add('open');
         startBirthdayConfetti(26);
         setTimeout(() => {
-            setBirthdayStep(4);
+            setBirthdayStep(5);
         }, 650);
     });
 
