@@ -1,3 +1,4 @@
+import './app.css';
 import * as PIXI from 'pixi.js';
 import {Live2DModel} from 'pixi-live2d-display/cubism4';
 import {InteractionDirector, hitZone, clamp} from './interactions.mjs';
