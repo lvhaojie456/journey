@@ -24,13 +24,6 @@
             </div>
         </div>
     </div>
-    <div id="entry-birthday-burst" class="entry-birthday-burst" aria-hidden="true">
-        <canvas id="entry-firework-canvas" class="entry-firework-canvas" aria-hidden="true"></canvas>
-        <div class="entry-birthday-message">
-            <span class="entry-birthday-title">朱梓萌生日快乐！</span>
-            <span class="entry-birthday-subtitle">看看哪里不一样吧！</span>
-        </div>
-    </div>
     <button id="save-btn" onclick="saveEdits()">保存修改</button>
 
     <nav>
@@ -39,12 +32,13 @@
             <li><a href="#timeline">故事</a></li>
             <li><a href="#gallery">影像</a></li>
             <li><a href="#bucketlist">心愿</a></li>
+            <li><a href="/live2d/">陪伴</a></li>
         </ul>
     </nav>
 
     <div class="container">
         <section id="hero" class="card hero-card">
-            <h1>Our Journey <button id="secret-birthday-trigger" class="secret-birthday-trigger" type="button" aria-label="打开生日惊喜">✦</button></h1>
+            <h1>Our Journey</h1>
             <div id="timer">
                 我们已经相爱了 <br class="mobile-break" style="display:none;">
                 <span class="timer-number" id="years">0</span> 年
@@ -133,89 +127,6 @@
             </div>
             <button class="add-btn" onclick="addBucketItem()">+ 添加新心愿</button>
         </section>
-    </div>
-
-    <div id="birthday-surprise" class="birthday-surprise" aria-hidden="true">
-        <div class="birthday-stage">
-            <button class="birthday-close" type="button" onclick="closeBirthdaySurprise()" aria-label="关闭生日惊喜">&times;</button>
-            <div class="birthday-progress" aria-hidden="true">
-                <span class="active"></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-
-            <section class="birthday-panel active" data-birthday-panel="0">
-                <p class="birthday-kicker">给朱梓萌的秘密入口</p>
-                <h2>先把今天的愿望藏进来</h2>
-                <p>不用说给任何人听，只要认真想一下，然后把它交给这片小小的夜色。</p>
-                <textarea id="birthday-wish" class="birthday-wish" rows="4" placeholder="我的愿望是..."></textarea>
-                <button id="birthday-start-btn" class="birthday-action" type="button">藏好了</button>
-            </section>
-
-            <section class="birthday-panel" data-birthday-panel="1">
-                <p class="birthday-kicker">第一步</p>
-                <h2>点亮三件小事</h2>
-                <p>朱梓萌今天有没有开开心心的呀</p>
-                <div class="birthday-tokens">
-                    <button class="wish-token" type="button">今天有没有好好吃饭呀</button>
-                    <button class="wish-token" type="button">今天有没有被吕豪杰抱抱呀</button>
-                    <button class="wish-token" type="button">今天有没有想吕豪杰呀</button>
-                </div>
-                <button id="birthday-token-next" class="birthday-action" type="button" disabled>继续</button>
-            </section>
-
-            <section class="birthday-panel birthday-photo-panel" data-birthday-panel="2">
-                <p class="birthday-kicker">第二步</p>
-                <h2>把今天的照片慢慢翻完</h2>
-                <p>这些瞬间都被我收好了。每翻一张，就把那一刻再轻轻过一遍。</p>
-                <div class="birthday-photo-card" id="birthday-photo-card">
-                    <img id="birthday-photo" src="/birthday/photo-1.jpg" alt="生日照片">
-                    <div class="birthday-photo-shine"></div>
-                </div>
-                <p id="birthday-photo-caption" class="birthday-photo-caption">抓到可爱宝宝一只</p>
-                <div id="birthday-photo-count" class="birthday-photo-count">1 / 4</div>
-                <button id="birthday-photo-next" class="birthday-action" type="button">下一张</button>
-            </section>
-
-            <section class="birthday-panel birthday-candle-panel" data-birthday-panel="3">
-                <p class="birthday-kicker">第三步</p>
-                <h2>许愿，然后轻轻吹灭蜡烛</h2>
-                <p>可以打开麦克风轻轻吹一下，也可以直接点烛火。</p>
-                <div class="birthday-cake" aria-label="生日蛋糕">
-                    <img class="birthday-cake-image" src="/birthday/cake.jpg" alt="生日蛋糕">
-                    <button class="birthday-candle" type="button" aria-label="烛火一"><span></span></button>
-                    <button class="birthday-candle" type="button" aria-label="烛火二"><span></span></button>
-                    <button class="birthday-candle" type="button" aria-label="烛火三"><span></span></button>
-                    <button class="birthday-candle" type="button" aria-label="烛火四"><span></span></button>
-                </div>
-                <div class="birthday-blow-controls">
-                    <button id="birthday-mic-btn" class="birthday-action birthday-mic-btn" type="button">打开麦克风吹蜡烛</button>
-                    <div class="birthday-blow-meter" aria-hidden="true"><span id="birthday-blow-meter"></span></div>
-                    <p id="birthday-blow-status">麦克风没开也没关系，点烛火也可以吹灭。</p>
-                </div>
-                <button id="birthday-candle-next" class="birthday-action" type="button" disabled>蜡烛吹好了</button>
-            </section>
-
-            <section class="birthday-panel" data-birthday-panel="4">
-                <p class="birthday-kicker">第四步</p>
-                <h2>这里有一封只给你的信</h2>
-                <p>慢慢打开，慢慢看。今天的时间可以走得轻一点。</p>
-                <button id="birthday-envelope" class="birthday-envelope" type="button" aria-label="打开生日信">
-                    <span class="envelope-flap"></span>
-                    <span class="envelope-paper">给朱梓萌</span>
-                </button>
-            </section>
-
-            <section class="birthday-panel birthday-letter-panel" data-birthday-panel="5">
-                <p class="birthday-kicker">生日快乐</p>
-                <h2>写给朱梓萌的一封信</h2>
-                <div id="birthday-letter-body" class="birthday-letter-body"></div>
-                <button id="birthday-letter-next" class="birthday-action" type="button">下一句</button>
-            </section>
-        </div>
     </div>
 
     <!-- Lightbox Overlay -->
