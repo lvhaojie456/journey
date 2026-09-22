@@ -2,6 +2,9 @@ import './app.css';
 import * as PIXI from 'pixi.js';
 import {Live2DModel} from 'pixi-live2d-display/cubism4';
 import {InteractionDirector, hitZone, clamp} from './interactions.mjs';
+// ES-module imports don't populate window.PIXI. The model must use the imported
+// ticker explicitly, otherwise Pixi renders a static model without updating it.
+Live2DModel.registerTicker(PIXI.Ticker);
 const API_BASE='/api/companion';
 const $ = id => document.getElementById(id);
 const state = {name:'小忆', speechAvailable:false, asrAvailable:false, busy:false, model:null, app:null, zoom:true,
@@ -337,6 +340,7 @@ function pose(){
     if(performance.now()>heldProp.until){heldProp=null;$('held-prop').classList.remove('show');setTimeout(()=>{if(!heldProp)$('held-prop').hidden=true;},300);}}
   frameNumber++;
   if(frameNumber%8===0){
+    $('avatar').dataset.updateFrames=frameNumber;
     $('avatar').dataset.motion=result.kind;$('avatar').dataset.mouth=state.mouth.toFixed(3);
     $('avatar').dataset.pose=JSON.stringify(result.values);$('avatar').dataset.speaking=String(state.speaking);
     $('avatar').dataset.audioPeak=diagnostic.maxAudioLevel.toFixed(3);$('avatar').dataset.audioFrames=diagnostic.speakingFrames;
@@ -356,6 +360,15 @@ async function initialize(){
   state.app=new PIXI.Application({view:$('avatar'),backgroundAlpha:0,antialias:true,resolution:Math.min(devicePixelRatio,2),autoDensity:true});
   state.model=await Live2DModel.from(info.modelPath,{autoInteract:false});state.model.anchor.set(0,0);state.app.stage.addChild(state.model);fit();
   state.model.internalModel.on('beforeModelUpdate',()=>{const values=pose();diagnostic.lastPose=values;for(const [id,v] of Object.entries(values))state.model.internalModel.coreModel.setParameterValueById(id,v);});
+  // Observe evaluated mesh geometry after Cubism updates, so browser smoke checks
+  // can distinguish a changing label/parameter from an actually moving model.
+  const headIndex=state.model.internalModel.getDrawableIndex('ArtMeshFace');
+  state.app.ticker.add(()=>{
+    if(frameNumber%8===0&&headIndex>=0){
+      const vertices=state.model.internalModel.getDrawableVertices(headIndex);
+      $('avatar').dataset.headVertices=JSON.stringify(Array.from(vertices.slice(0,12),v=>Math.round(v*1000)/1000));
+    }
+  },null,PIXI.UPDATE_PRIORITY.LOW-1);
   setupTouches();setupProps();new ResizeObserver(()=>fit()).observe($('stage'));
   diagnostic.ready=true;$('avatar').dataset.ready='true';status('在这里，等你打招呼');bubble('嗨，我是'+state.name+'。试着摸摸头，或拉一拉我的手。');
   feedback(director.trigger('welcome',{quiet:true}),{speak:false});
